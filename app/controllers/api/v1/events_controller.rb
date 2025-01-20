@@ -25,10 +25,10 @@ module Api
       #show
       #GET    /api/v1/events/:id(.:format)
       def show
-        if @event.nil?
-          render json: { message: "No Event found" }, status: :unprocessable_entity
-        else
+        if @event
           render json: @event
+        else
+          render json: { message: "No Event found" }, status: :unprocessable_entity
         end
       end
 
@@ -70,7 +70,7 @@ module Api
       end
 
       def event_params
-        params.permit(:title, :description, :start_time, :end_time, :location)
+        params.require(:event).permit(:title, :description, :start_time, :end_time, :location)
       end
     end
   end
