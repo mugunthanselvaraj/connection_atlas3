@@ -1,6 +1,8 @@
 module Api
   module V1
     class EventsController < ApplicationController
+      before_action :authenticate_user!, only: %i[create update destroy]
+      before_action :authorize_admin, only: %i[create update destroy]
       before_action :set_event, only: %i[ show update destroy ]
 
       #api_v1_events GET    /api/v1/events(.:format)
@@ -13,12 +15,12 @@ module Api
       #create new
       #POST   /api/v1/events(.:format)
       def create
-        event = Event.new(event_params)
+        @event = current_user.events.build(event_params)
 
-        if event.save
-          render json: { message: "Event created successfully", data: event }
+        if @event.save
+          render json: { message: "Event created successfully", data: @event }
         else
-          render json: { message: "Failed to create", data: event.errors }, status: :unprocessable_entity
+          render json: { message: "Failed to create", data: @event.errors }, status: :unprocessable_entity
         end
       end
 
@@ -71,6 +73,12 @@ module Api
 
       def event_params
         params.require(:event).permit(:title, :description, :start_time, :end_time, :location)
+      end
+
+      def authorize_admin
+        unless current_user.email == "admin@gmail.com"
+          render json: { message: "Forbidden action" }
+        end
       end
     end
   end
