@@ -48,6 +48,8 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "byebug"
+
+  gem "dotenv"
 end
 
 gem "devise", "~> 4.9"
