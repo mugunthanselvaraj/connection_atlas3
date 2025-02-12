@@ -10,14 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_21_164446) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_11_052556) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "event_locations", force: :cascade do |t|
+    t.float "laltitude", null: false
+    t.float "longitude", null: false
+    t.string "name"
+    t.bigint "event_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_event_locations_on_event_id"
+  end
 
   create_table "events", force: :cascade do |t|
     t.string "title", null: false
     t.text "description", null: false
-    t.string "location"
     t.datetime "start_time", null: false
     t.datetime "end_time", null: false
     t.datetime "created_at", null: false
@@ -40,5 +49,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_21_164446) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "event_locations", "events"
   add_foreign_key "events", "users"
 end

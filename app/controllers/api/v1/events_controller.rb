@@ -72,7 +72,13 @@ module Api
       end
 
       def event_params
-        params.require(:event).permit(:title, :description, :start_time, :end_time, :location)
+        params.require(:event).permit(
+          :title,
+          :description,
+          :start_time,
+          :end_time,
+          event_location_attributes: [:laltitude, :longitude, :name] 
+        )
       end
 
       def authorize_admin
