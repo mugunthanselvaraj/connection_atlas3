@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
-            sessions: "users/sessions",
-            registrations: "users/registrations",
-          }
+                       sessions: "users/sessions",
+                       registrations: "users/registrations",
+                     }
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -16,7 +16,14 @@ Rails.application.routes.draw do
   # /api/v1/events/:id
   namespace :api do
     namespace :v1 do
-      resources :events
+      resources :events do
+        collection do
+          get :active
+          get :upcoming
+          get :past
+          get :active_upcoming
+        end
+      end
     end
   end
 end

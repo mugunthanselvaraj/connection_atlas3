@@ -12,6 +12,27 @@ module Api
         render json: @events
       end
 
+      def past
+        @events = Event.past
+        render json: @events
+      end
+
+      def active
+        @events = Event.active
+        render json: @events
+      end
+
+      def upcoming
+        @events = Event.upcoming
+        render json: @events
+      end
+
+      def active_upcoming
+        @active_events = Event.active
+        @upcoming_events = Event.upcoming
+        render json: { active: @active_events, upcoming: @upcoming_events }
+      end
+
       #create new
       #POST   /api/v1/events(.:format)
       def create
@@ -77,7 +98,7 @@ module Api
           :description,
           :start_time,
           :end_time,
-          event_location_attributes: [:laltitude, :longitude, :name] 
+          event_location_attributes: [:laltitude, :longitude, :name],
         )
       end
 
