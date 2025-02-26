@@ -6,5 +6,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates :date_of_birth, presence: true
+  validates :gender, presence: true
+  enum :gender, { not_specified: 0, male: 1, female: 2, other: 3 }
   has_many :events
 end
