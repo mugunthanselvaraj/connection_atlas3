@@ -23,6 +23,10 @@ Rails.application.routes.draw do
           get :past
           get :active_upcoming
         end
+        member do
+          post :add_images
+          delete :remove_image
+        end
       end
       resources :users, only: [:index, :show, :update] do
         member do

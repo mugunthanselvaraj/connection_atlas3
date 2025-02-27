@@ -3,7 +3,7 @@ module Api
     class EventsController < ApplicationController
       before_action :authenticate_user!, only: %i[create update destroy]
       before_action :authorize_admin, only: %i[create update destroy]
-      before_action :set_event, only: %i[ show update destroy ]
+      before_action :set_event, only: %i[ show update destroy add_images remove_image ]
 
       #api_v1_events GET    /api/v1/events(.:format)
       def index
@@ -86,6 +86,30 @@ module Api
         end
       end
 
+      # Upload multiple images to an event
+      def add_images
+        if params[:images].present?
+          params[:images].each do |image|
+            @event.event_images.create(image: image)
+          end
+          render json: { message: "Images uploaded successfully", data: @event.event_images }, status: :ok
+        else
+          render json: { message: "No images provided" }, status: :unprocessable_entity
+        end
+      end
+
+      # Delete a specific image from an event
+      def remove_image
+        event_image = @event.event_images.find_by(id: params[:image_id])
+
+        if event_image
+          event_image.destroy
+          render json: { message: "Image deleted successfully" }, status: :ok
+        else
+          render json: { message: "Image not found" }, status: :not_found
+        end
+      end
+
       private
 
       def set_event
@@ -100,6 +124,7 @@ module Api
           :end_time,
           :maximum_participants,
           event_location_attributes: [:laltitude, :longitude, :name],
+          event_images_attributes: [:id, :image, :_destroy],
         )
       end
 

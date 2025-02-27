@@ -8,6 +8,7 @@ class Event < ApplicationRecord
 
   belongs_to :user
   has_one :event_location, dependent: :destroy
+  has_many :event_images, dependent: :destroy
   accepts_nested_attributes_for :event_location, allow_destroy: true
 
   scope :active, -> { where("start_time <= ? and end_time >= ?", DateTime.now, DateTime.now) }
