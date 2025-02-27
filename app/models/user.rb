@@ -10,6 +10,8 @@ class User < ApplicationRecord
   validates :last_name, presence: true
   validates :date_of_birth, presence: true
   validates :gender, presence: true
+  validate :must_be_at_least_16_years_old
+
   enum :gender, { not_specified: 0, male: 1, female: 2, other: 3 }
   has_many :events
 
@@ -24,5 +26,13 @@ class User < ApplicationRecord
 
   def deactivate!
     update(active: false)
+  end
+
+  private
+
+  def must_be_at_least_16_years_old
+    if date_of_birth.present? && date_of_birth > 16.years.ago.to_date
+      errors.add(:date_of_birth, "must be at least 16 years old")
+    end
   end
 end

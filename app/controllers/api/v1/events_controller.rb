@@ -98,6 +98,7 @@ module Api
           :description,
           :start_time,
           :end_time,
+          :maximum_participants,
           event_location_attributes: [:laltitude, :longitude, :name],
         )
       end

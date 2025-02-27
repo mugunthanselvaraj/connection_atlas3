@@ -3,6 +3,7 @@ class Event < ApplicationRecord
   validates :description, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true
+  validates :maximum_participants, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validate :start_time_must_be_before_end_time
 
   belongs_to :user
