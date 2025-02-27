@@ -12,4 +12,17 @@ class User < ApplicationRecord
   validates :gender, presence: true
   enum :gender, { not_specified: 0, male: 1, female: 2, other: 3 }
   has_many :events
+
+  scope :active, -> { where(active: true) }
+
+  mount_uploader :profile_picture, ProfilePictureUploader
+
+  # Check if user is an admin
+  def admin?
+    self.admin
+  end
+
+  def deactivate!
+    update(active: false)
+  end
 end

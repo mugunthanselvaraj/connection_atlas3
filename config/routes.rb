@@ -24,6 +24,12 @@ Rails.application.routes.draw do
           get :active_upcoming
         end
       end
+      resources :users, only: [:index, :show, :update] do
+        member do
+          patch :deactivate
+          post :upload_profile_picture
+        end
+      end
     end
   end
 end

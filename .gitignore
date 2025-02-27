@@ -33,3 +33,4 @@
 .byebug_history
 Gemfile.lock
 /*.env
+/public/uploads/*
