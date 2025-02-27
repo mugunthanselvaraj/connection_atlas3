@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  rolify after_add: :set_default_role
   include Devise::JWT::RevocationStrategies::JTIMatcher
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -19,16 +20,25 @@ class User < ApplicationRecord
 
   mount_uploader :profile_picture, ProfilePictureUploader
 
-  # Check if user is an admin
-  def admin?
-    self.admin
-  end
+  after_create :set_default_role
 
   def deactivate!
     update(active: false)
   end
 
+  def update_roles(new_roles)
+    new_roles = new_roles.map(&:to_sym)
+    new_roles << :participant unless new_roles.include?(:participant)
+
+    self.roles.where.not(name: "participant").destroy_all
+    new_roles.each { |role| self.add_role(role) }
+  end
+
   private
+
+  def set_default_role(role = nil)
+    self.add_role(:participant) if self.roles.blank?
+  end
 
   def must_be_at_least_16_years_old
     if date_of_birth.present? && date_of_birth > 16.years.ago.to_date

@@ -1,7 +1,7 @@
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user! # Ensure user is authenticated
-  before_action :set_user, only: [:show, :update, :deactivate, :upload_profile_picture]
-  before_action :authorize_admin, only: [:index] # Only admin can list users
+  before_action :set_user, only: [:show, :update, :deactivate, :upload_profile_picture, :update_roles]
+  before_action :authorize_admin, only: [:index, :update_roles]
   before_action :authorize_user_or_admin, only: [:show, :update, :deactivate, :upload_profile_picture] # Admin or self can access
 
   # GET /api/v1/users (Admin only)
@@ -42,6 +42,14 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def update_roles
+    if @user.update_roles(params[:roles])
+      render json: { message: "Roles updated successfully", roles: @user.roles.pluck(:name) }
+    else
+      render json: { message: "Invalid role" }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   # Find user by ID
@@ -58,11 +66,13 @@ class Api::V1::UsersController < ApplicationController
 
   # Ensure only admin can list users
   def authorize_admin
-    render json: { error: "Unauthorized" }, status: :unauthorized unless current_user.admin?
+    unless current_user.has_role?(:admin)
+      render json: { message: "Forbidden action" }, status: :unauthorized
+    end
   end
 
   # Ensure only admin or the user himself can access/update/delete
   def authorize_user_or_admin
-    render json: { error: "Unauthorized" }, status: :unauthorized unless current_user.admin? || current_user == @user
+    render json: { error: "Unauthorized" }, status: :unauthorized unless current_user.has_role?(:admin) || current_user == @user
   end
 end

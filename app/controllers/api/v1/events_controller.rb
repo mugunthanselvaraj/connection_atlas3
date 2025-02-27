@@ -129,7 +129,7 @@ module Api
       end
 
       def authorize_admin
-        unless current_user.email == ENV["ADMIN_EMAIL"]
+        unless %i[admin organizer companion].include?(current_user.role)
           render json: { message: "Forbidden action" }, status: :unauthorized
         end
       end

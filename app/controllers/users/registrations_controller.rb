@@ -6,6 +6,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
   before_action :configure_permitted_parameters, if: :devise_controller?
   respond_to :json
 
+  def create
+    super do |user|
+      user.add_role(:participant) if user.persisted? && user.roles.blank?
+    end
+  end
+
   protected
 
   def configure_permitted_parameters
