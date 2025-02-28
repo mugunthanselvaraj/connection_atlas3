@@ -1,4 +1,4 @@
-class CreateEventLocation < ActiveRecord::Migration[8.0]
+class CreateEventLocation < ActiveRecord::Migration[7.1]
   def change
     create_table :event_locations do |t|
       t.float :laltitude, null: false

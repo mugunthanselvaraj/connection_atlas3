@@ -1,4 +1,4 @@
-class RolifyCreateRoles < ActiveRecord::Migration[8.0]
+class RolifyCreateRoles < ActiveRecord::Migration[7.1]
   def change
     create_table(:roles) do |t|
       t.string :name
@@ -11,8 +11,8 @@ class RolifyCreateRoles < ActiveRecord::Migration[8.0]
       t.references :user
       t.references :role
     end
-    
-    add_index(:roles, [ :name, :resource_type, :resource_id ])
-    add_index(:users_roles, [ :user_id, :role_id ])
+
+    add_index(:roles, [:name, :resource_type, :resource_id])
+    add_index(:users_roles, [:user_id, :role_id])
   end
 end
