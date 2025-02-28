@@ -1,19 +1,576 @@
 ---
 openapi: 3.0.1
 info:
-  title: API V1
-  version: v1
+  title: Connection Atlas
+  description: API documentation for the Connection atlas
+  version: 0.0.1
 paths:
-  "/status":
-    get:
-      summary: Check API status
+  /users:
+    post:
+      summary: User Registration
       tags:
-      - Status
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  required:
+                    - first_name
+                    - last_name
+                    - email
+                    - password
+                    - date_of_birth
+                    - gender
+                  properties:
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    email:
+                      type: string
+                      format: email
+                    password:
+                      type: string
+                      format: password
+                    date_of_birth:
+                      type: string
+                      format: date-time
+                    gender:
+                      type: string
+                      enum: [not_specified, male, female, other]
       responses:
-        '200':
-          description: successful
+        "201":
+          description: User registered successfully
+        "422":
+          description: Validation errors
+  /users/sign_in:
+    post:
+      summary: User Login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  required:
+                    - email
+                    - password
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    password:
+                      type: string
+                      format: password
+      responses:
+        "200":
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT access token
+        "401":
+          description: Unauthorized - Invalid credentials
+  /users/sign_out:
+    delete:
+      summary: User Logout
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User logged out successfully
+        "401":
+          description: Unauthorized - Invalid token
+  /api/v1/users:
+    get:
+      summary: Get all users
+      tags:
+        - User Management
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successfully retrieved user list
+  /api/v1/users/{id}:
+    get:
+      summary: Get a single user
+      tags:
+        - User Management
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully retrieved user details
+    patch:
+      summary: Update a user
+      tags:
+        - User Management
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  required:
+                    - first_name
+                    - last_name
+                    - date_of_birth
+                    - gender
+                  properties:
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    date_of_birth:
+                      type: string
+                      format: date
+                    gender:
+                      type: string
+                      enum: [not_specified, male, female, other]
+      responses:
+        "200":
+          description: User updated successfully
+  /api/v1/users/{id}/deactivate:
+    patch:
+      summary: Deactivate a user
+      tags:
+        - User Management
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User deactivated successfully
+  /api/v1/users/{id}/upload_profile_picture:
+    post:
+      summary: Upload profile picture
+      tags:
+        - User Management
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                profile_picture:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Profile picture uploaded successfully
+  /api/v1/users/{id}/list_roles:
+    get:
+      summary: List all roles of a user
+      tags:
+        - User Management
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully retrieved user roles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  roles:
+                    type: array
+                    items:
+                      type: string
+        "404":
+          description: User not found
+  /api/v1/users/{id}/update_roles:
+    patch:
+      summary: Update user roles
+      tags:
+        - User Management
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roles:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: User roles updated successfully
+  /api/v1/events:
+    get:
+      summary: Get all events
+      tags:
+        - Event Module
+      responses:
+        "200":
+          description: Successfully retrieved all events
+    post:
+      summary: Create an event
+      tags:
+        - Event Module
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: object
+                  required:
+                    - title
+                    - description
+                    - start_time
+                    - end_time
+                    - maximum_participants
+                    - event_location_attributes
+                  properties:
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    start_time:
+                      type: string
+                      format: date-time
+                    end_time:
+                      type: string
+                      format: date-time
+                    maximum_participants:
+                      type: integer
+                    event_location_attributes:
+                      type: object
+                      properties:
+                        laltitude:
+                          type: number
+                          format: float
+                        longitude:
+                          type: number
+                          format: float
+                        name:
+                          type: string
+      responses:
+        "201":
+          description: Event created successfully
+        "422":
+          description: Validation errors
+    patch:
+      summary: Update an event
+      tags:
+        - Event Module
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: object
+                  required:
+                    - description
+                    - maximum_participants
+                  properties:
+                    description:
+                      type: string
+                    maximum_participants:
+                      type: integer
+      responses:
+        "200":
+          description: Event updated successfully
+        "422":
+          description: Validation errors
+  /api/v1/events/active:
+    get:
+      summary: Get all active events
+      tags:
+        - Event Module
+      responses:
+        "200":
+          description: Successfully retrieved active events
+  /api/v1/events/active_upcoming:
+    get:
+      summary: Get active and upcoming events
+      tags:
+        - Event Module
+      responses:
+        "200":
+          description: Successfully retrieved active and upcoming events
+  /api/v1/events/past:
+    get:
+      summary: Get past events
+      tags:
+        - Event Module
+      responses:
+        "200":
+          description: Successfully retrieved past events
+  /api/v1/events/upcoming:
+    get:
+      summary: Get upcoming events
+      tags:
+        - Event Module
+      responses:
+        "200":
+          description: Successfully retrieved upcoming events
+  /api/v1/events/{id}:
+    get:
+      summary: Get a specific event
+      tags:
+        - Event Module
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully retrieved event details
+    delete:
+      summary: Delete an event
+      tags:
+        - Event Module
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Event deleted successfully
+        "404":
+          description: Event not found
+  /api/v1/events/{id}/add_images:
+    post:
+      summary: Add images to an event
+      tags:
+        - Event Module
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        "200":
+          description: Images uploaded successfully
+        "422":
+          description: Validation errors
+  /api/v1/events/{id}/remove_image:
+    delete:
+      summary: Remove an image from an event
+      tags:
+        - Event Module
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: image_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Image removed successfully
+        "404":
+          description: Image not found
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        maximum_participants:
+          type: integer
+        user_id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        event_location:
+          $ref: "#/components/schemas/EventLocation"
+        event_images:
+          type: array
+          items:
+            $ref: "#/components/schemas/EventImage"
+    EventLocation:
+      type: object
+      properties:
+        id:
+          type: integer
+        laltitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        name:
+          type: string
+        event_id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    EventImage:
+      type: object
+      properties:
+        id:
+          type: integer
+        event_id:
+          type: integer
+        image:
+          type: string
+          format: uri
+          description: "URL of the uploaded event image"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+        gender:
+          type: string
+          description: "not_specified, male, female, other"
+        active:
+          type: boolean
+        profile_picture:
+          type: string
+          format: uri
+          description: "URL to the uploaded profile picture"
+
 servers:
-- url: https://{defaultHost}
-  variables:
-    defaultHost:
-      default: localhost:3000
+  - url: http://{defaultHost}
+    variables:
+      defaultHost:
+        default: localhost:3000

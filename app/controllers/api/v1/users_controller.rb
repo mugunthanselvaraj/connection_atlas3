@@ -1,7 +1,7 @@
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user! # Ensure user is authenticated
-  before_action :set_user, only: [:show, :update, :deactivate, :upload_profile_picture, :update_roles]
-  before_action :authorize_admin, only: [:index, :update_roles]
+  before_action :set_user, only: [:show, :update, :deactivate, :upload_profile_picture, :update_roles, :list_roles]
+  before_action :authorize_admin, only: [:index, :update_roles, :list_roles]
   before_action :authorize_user_or_admin, only: [:show, :update, :deactivate, :upload_profile_picture] # Admin or self can access
 
   # GET /api/v1/users (Admin only)
@@ -40,6 +40,10 @@ class Api::V1::UsersController < ApplicationController
     else
       render json: { error: "No image uploaded" }, status: :unprocessable_entity
     end
+  end
+
+  def list_roles
+    render json: { roles: @user.roles.pluck(:name) }, status: :ok
   end
 
   def update_roles

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_27_173511) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_28_183416) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -83,6 +83,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_27_173511) do
   end
 
   add_foreign_key "event_images", "events"
-  add_foreign_key "event_locations", "events"
+  add_foreign_key "event_locations", "events", on_delete: :cascade
   add_foreign_key "events", "users"
 end

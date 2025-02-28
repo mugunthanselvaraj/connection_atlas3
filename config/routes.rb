@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  mount Rswag::Api::Engine => '/api-docs'
-  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => "/api-docs"
+  mount Rswag::Ui::Engine => "/api-docs"
   devise_for :users, controllers: {
                        sessions: "users/sessions",
                        registrations: "users/registrations",
@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         member do
           patch :deactivate
           post :upload_profile_picture
+          get :list_roles
           patch :update_roles
         end
       end
