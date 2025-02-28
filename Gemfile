@@ -58,9 +58,19 @@ gem "rack-cors"
 
 gem "devise-jwt"
 
-gem 'carrierwave', '~> 2.2' # for file upload
+gem "carrierwave", "~> 2.2" # for file upload
 
-gem 'fog-aws'  # Needed for AWS S3 in UAT/Production
+gem "fog-aws"  # Needed for AWS S3 in UAT/Production
 
 gem "rolify", "~> 6.0"
 gem "cancancan", "~> 3.6"
+
+#swagger gems
+group :development, :test do
+  gem "rswag"
+  gem "rspec-rails"
+end
+
+gem "rswag-api"
+gem "rswag-ui"
+gem "rswag-specs"
