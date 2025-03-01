@@ -2,7 +2,7 @@
 openapi: 3.0.1
 info:
   title: Connection Atlas
-  description: API documentation for the Connection atlas
+  description: API documentation for the Connection atlas - Willings international GMBH (Developed by Laptech consulting tech)
   version: 0.0.1
 paths:
   /users:
