@@ -312,8 +312,9 @@ Devise.setup do |config|
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
   config.jwt do |jwt|
-    #TODO to move to env file
-    jwt.secret = Rails.application.credentials.fetch(:secret_key_base)
+    
+    # Issue command `rails secret`` in production env to create one and copy it in .env
+    Rails.application.credentials.fetch(:secret_key_base, ENV["SECRET_KEY_BASE"])
     jwt.dispatch_requests = [
       ["POST", %r{^/users/sign_in$}],
       ["POST", %r{^/users$}],
