@@ -58,7 +58,7 @@ gem "rack-cors"
 
 gem "devise-jwt"
 
-gem "carrierwave", "~> 2.2" # for file upload
+gem "carrierwave", "~> 3.1" # for file upload
 
 gem "fog-aws"  # Needed for AWS S3 in UAT/Production
 
